@@ -8,6 +8,7 @@ call plug#begin('~/.local/share/nvim/plugged')
   Plug 'vim-airline/vim-airline-themes'
   Plug 'preservim/nerdcommenter'
   Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+  Plug 'tpope/vim-fugitive'
 call plug#end()
 
 let mapleader=","
@@ -27,7 +28,10 @@ set noshowcmd                       " slows down over ssh
 set termguicolors                   " enable 24-bit color in the terminal
 colorscheme dracula                 " color scheme of the say
 hi! link CursorLineNR CursorLine    " i like the cursor line to be full width
+
 let g:airline_theme='dracula'
+"let g:airline_powerline_fonts = 1
+let g:airline#extensions#fugitiveline#enabled = 1
 
 let g:NERDSpaceDelims = 1
 let g:NERDCompactSexyComs = 1
