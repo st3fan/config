@@ -1,49 +1,123 @@
-" This Source Code Form is subject to the terms of the Mozilla Public
-" License, v. 2.0. If a copy of the MPL was not distributed with this
-" file, You can obtain one at http://mozilla.org/MPL/2.0/
 
 call plug#begin('~/.local/share/nvim/plugged')
-  Plug 'dracula/vim', { 'as': 'dracula' }
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
-  Plug 'preservim/nerdcommenter'
+  Plug 'morhetz/gruvbox'
+  Plug 'dracula/vim', { 'as': 'dracula' }
+  Plug 'neovim/nvim-lsp'
+  Plug 'neovim/nvim-lspconfig'
+  Plug 'nvim-lua/lsp_extensions.nvim'
+  Plug 'nvim-lua/completion-nvim'
   Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-  Plug 'tpope/vim-fugitive'
+  Plug 'farmergreg/vim-lastplace'
+  Plug 'preservim/nerdcommenter'
+  Plug 'sonph/onehalf', { 'rtp': 'vim' }
+  Plug 'lifepillar/vim-solarized8'
 call plug#end()
 
-let mapleader=","
+lua << END
+  require('init')
+END
 
 set nocompatible
 
-set number                          " show line numbers
-set cursorline                      " highlight the line the cursor is on
+set number
+set cursorline
+set nowrap
 
-set tabstop=4                       " number of columns occupied by a tab character
-set softtabstop=4                   " see multiple spaces as tabstops so <BS> does the right thing
-set expandtab                       " converts tabs to white space
-set shiftwidth=4                    " width for autoindents
+set tabstop=4               " number of columns occupied by a tab character
+set softtabstop=4           " see multiple spaces as tabstops so <BS> does the right thing
+set expandtab               " converts tabs to white space
+set shiftwidth=4            " width for autoindents
 
-set noshowcmd                       " slows down over ssh
+set termguicolors
+set background=light
+colorscheme solarized8
 
-set termguicolors                   " enable 24-bit color in the terminal
-colorscheme dracula                 " color scheme of the say
-hi! link CursorLineNR CursorLine    " i like the cursor line to be full width
+let g:solarized_extra_hi_groups=1
 
-let g:airline_theme='dracula'
-"let g:airline_powerline_fonts = 1
-let g:airline#extensions#fugitiveline#enabled = 1
+"noremap <Up> <NOP>
+"noremap <Down> <NOP>
+"noremap <Left> <NOP>
+"noremap <Right> <NOP>
 
-let g:NERDSpaceDelims = 1
-let g:NERDCompactSexyComs = 1
-let g:NERDDefaultAlign = 'left'
-let g:NERDCommentEmptyLines = 1
+au FileType javascript set sw=2
+au FileType javascript set ts=2
+au FileType javascript set sts=2
+au FileType javascript set expandtab
 
-let g:go_auto_sameids = 1
-let g:go_auto_type_info = 1
-let g:go_highlight_fields = 1
-let g:go_highlight_types = 1
-let g:go_highlight_functions = 1
-let g:go_highlight_function_calls = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_extra_types = 1
+au FileType go set noexpandtab
+au FileType go set shiftwidth=4
+au FileType go set softtabstop=4
+au FileType go set tabstop=4
+
+"let g:go_highlight_build_constraints = 1
+"let g:go_highlight_extra_types = 1
+"let g:go_highlight_fields = 1
+"let g:go_highlight_functions = 1
+"let g:go_highlight_methods = 1
+"let g:go_highlight_operators = 1
+"let g:go_highlight_structs = 1
+"let g:go_highlight_types = 1
+"let g:go_auto_sameids = 0
+"let g:go_fmt_command = "goimports"
+"let g:go_auto_type_info = 1
+"let g:go_def_mode='gopls'
+"let g:go_info_mode='gopls'
+
+"au Filetype go nmap <leader>a <Plug>(go-alternate-edit)
+"au FileType go nmap <leader>d <Plug>(go-def)
+"au FileType go nmap <leader>t :GoTest -short<cr>
+"au FileType go nmap <leader>r :GoRun<cr>
+
+let mapleader = ","
+
+" Use <Tab> and <S-Tab> to navigate through popup menu
+"inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+"inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
+" use <Tab> as trigger keys
+"imap <Tab> <Plug>(completion_smart_tab)
+"imap <S-Tab> <Plug>(completion_smart_s_tab)
+
+" Code navigation shortcuts
+nnoremap <silent> <c-]> <cmd>lua vim.lsp.buf.definition()<CR>
+nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
+nnoremap <silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
+nnoremap <silent> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
+nnoremap <silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
+nnoremap <silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
+nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
+nnoremap <silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
+nnoremap <silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
+
+"nnoremap <silent> ga    <cmd>lua vim.lsp.buf.code_action()<CR>
+
+
+" Set updatetime for CursorHold
+" 300ms of no cursor movement to trigger CursorHold
+"set updatetime=300
+" Show diagnostic popup on cursor hold
+"autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()
+
+set updatetime=1500
+hi LspReferenceRead cterm=bold ctermbg=red guifg=Brown guibg=DarkYellow
+hi LspReferenceText cterm=bold ctermbg=red guifg=Brown guibg=DarkYellow
+hi LspReferenceWrite cterm=bold ctermbg=red guifg=Brown guibg=DarkYellow
+autocmd CursorHold  * lua vim.lsp.buf.document_highlight()
+autocmd CursorHoldI * lua vim.lsp.buf.document_highlight()
+autocmd CursorMoved * lua vim.lsp.buf.clear_references()
+
+"autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+"autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+
+
+" Goto previous/next diagnostic warning/error
+"nnoremap <silent> g[ <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
+"nnoremap <silent> g] <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
+
+" have a fixed column for the diagnostics to appear in
+" this removes the jitter when warnings/errors flow in
+set signcolumn=yes
+
 
